@@ -1,0 +1,579 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07111f">
+<meta name="description" content="SiberWaspada: edukasi keamanan digital dan analisis awal indikator phishing.">
+<title>SiberWaspada — Cyber Threat Awareness</title>
+<style>
+:root{
+ --bg:#07111f;--panel:#0d1b2b;--panel2:#112438;--line:#23394e;
+ --text:#eaf5ff;--muted:#92a8bc;--cyan:#42e6d0;--blue:#5caeff;
+ --red:#ff7184;--yellow:#ffca68;--green:#48e3a3;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:85px}
+body{margin:0;background:radial-gradient(ellipse at 80% 0%,#153750 0,transparent 35%),var(--bg);color:var(--text);font:14px/1.6 "Segoe UI",Arial,sans-serif}
+button,input,select{font:inherit}
+button,a{ -webkit-tap-highlight-color:transparent}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer}
+.wrap{width:min(1180px,100% - 36px);margin:auto}
+header{position:sticky;top:0;z-index:20;background:#07111fee;border-bottom:1px solid var(--line);backdrop-filter:blur(18px)}
+.nav{min-height:67px;display:flex;align-items:center;justify-content:space-between;gap:15px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:17px}
+.logo{width:39px;height:39px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(135deg,var(--cyan),var(--blue));color:#06121f;font-size:24px}
+.brand em{font-style:normal;color:var(--cyan)}
+nav{display:flex;gap:20px;color:var(--muted);font-size:12px}
+nav a:hover{color:var(--cyan)}
+button,.btn{border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--text);background:var(--panel2);font-weight:700;transition:.18s}
+button:hover,.btn:hover{border-color:var(--cyan);transform:translateY(-1px)}
+.primary{background:var(--cyan);border-color:var(--cyan);color:#06131e}
+.danger-btn{color:var(--red)}
+.hero{padding:47px 0 28px;display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:stretch}
+.eyebrow{font-size:11px;font-weight:900;letter-spacing:1.8px;color:var(--cyan);text-transform:uppercase}
+h1{font-size:clamp(34px,5vw,57px);letter-spacing:-1.8px;line-height:1.08;margin:13px 0}
+h1 em{font-style:normal;color:var(--cyan)}
+p{margin:0;color:var(--muted)}
+.hero p{max-width:610px;line-height:1.85}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.panel{border:1px solid var(--line);border-radius:16px;padding:19px;background:linear-gradient(145deg,#102337ee,#091522ee);min-width:0}
+.terminal{display:flex;flex-direction:column;justify-content:space-between;min-height:270px;position:relative;overflow:hidden}
+.terminal:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.12;background-image:linear-gradient(var(--cyan) 1px,transparent 1px),linear-gradient(90deg,var(--cyan) 1px,transparent 1px);background-size:24px 24px}
+.terminal>*{position:relative}
+.terminaltop{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--muted)}
+.live{color:var(--green)}
+.shield{font-size:65px;color:var(--cyan);text-align:center;filter:drop-shadow(0 0 20px #42e6d044);padding:12px}
+.mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mini{padding:10px;background:#06121fdd;border:1px solid var(--line);border-radius:9px}
+.mini b{display:block;font-size:19px;color:var(--cyan)}
+.mini small{font-size:9px;color:var(--muted)}
+section{padding:24px 0 35px}
+.heading{display:flex;justify-content:space-between;align-items:end;gap:15px;margin-bottom:17px}
+.heading h2{font-size:24px;line-height:1.2;margin:5px 0}
+.heading p{font-size:12px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{border:1px solid var(--line);background:var(--panel);border-radius:13px;padding:17px}
+.stat .label{font-size:11px;color:var(--muted)}
+.stat .num{font-size:29px;font-weight:900;margin:6px 0}
+.stat .sub{font-size:10px;color:var(--muted)}
+.cyan{color:var(--cyan)}.red{color:var(--red)}.yellow{color:var(--yellow)}.green{color:var(--green)}
+.scanner-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:15px;align-items:start}
+label{display:block;font-size:12px;font-weight:800;margin-bottom:8px}
+.input{width:100%;padding:13px;border:1px solid #2a465d;background:#06121f;border-radius:9px;color:var(--text);outline:none}
+.input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #42e6d012}
+.hint{font-size:11px;line-height:1.7;margin:9px 0 13px}
+.examples{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}
+.chip{font-size:10px;font-weight:600;padding:7px 9px;border-radius:8px;background:#081725;color:#b8cede}
+.notice{margin-top:14px;padding:12px;border-left:3px solid var(--yellow);border-radius:0 8px 8px 0;background:#ffca680b;color:#c0cfdd;font-size:11px;line-height:1.8}
+.status{font-size:11px;min-height:20px;margin-top:10px;color:var(--muted)}
+.result{display:none}.result.show{display:block;animation:rise .25s ease}
+@keyframes rise{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.risk-head{display:flex;gap:16px;align-items:center}
+.score{width:89px;height:89px;flex-shrink:0;border:5px solid var(--yellow);border-radius:50%;display:grid;place-items:center;font-size:26px;font-weight:900}
+.score small{display:block;text-align:center;font-size:9px;color:var(--muted);font-weight:500}
+.risk-title{font-size:17px;font-weight:900}
+.progress{height:7px;border-radius:20px;background:#203448;overflow:hidden;margin:16px 0}
+.progress div{height:100%;width:0;background:var(--yellow);transition:width .4s}
+.findings{display:grid;gap:8px}
+.finding{display:flex;gap:9px;background:#071521;border:1px solid #1b3042;border-radius:9px;padding:11px;font-size:11px;line-height:1.65}
+.finding b{display:block;font-size:12px;margin-bottom:2px}
+.finding p{font-size:11px}
+.severity{font-weight:900;min-width:16px}
+.result-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.small-btn{font-size:11px;padding:8px 10px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:570px}
+th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);font-size:11px;vertical-align:top}
+th{color:var(--muted);font-weight:700}
+td{overflow-wrap:anywhere}
+.pill{display:inline-block;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:800}
+.pill.high{background:#ff71841b;color:var(--red)}
+.pill.medium{background:#ffca681b;color:var(--yellow)}
+.pill.low{background:#48e3a31b;color:var(--green)}
+.toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.toolbar select{width:auto;min-width:130px}
+.empty{padding:23px;text-align:center;color:var(--muted);font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.edu-icon{font-size:25px}
+.cards h3{font-size:14px;margin:9px 0 5px}
+.cards p{font-size:12px;line-height:1.8}
+.lesson{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.lesson .panel{padding:19px}
+.lesson h3{font-size:14px;margin:0 0 8px}
+.lesson ul{margin:0;padding-left:18px;color:var(--muted);font-size:12px;line-height:2}
+.faq{display:grid;gap:8px}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:13px}
+summary{font-size:12px;font-weight:800;cursor:pointer}
+details p{font-size:12px;line-height:1.8;margin-top:10px}
+footer{border-top:1px solid var(--line);padding:23px 0;margin-top:25px}
+.foot{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;font-size:11px;color:var(--muted)}
+.foot strong{color:var(--cyan)}
+@media(max-width:800px){
+ .hero,.scanner-grid{grid-template-columns:1fr}
+ .stats{grid-template-columns:repeat(2,1fr)}
+ .cards{grid-template-columns:1fr 1fr}
+ nav{gap:11px}
+}
+@media(max-width:520px){
+ .wrap{width:calc(100% - 26px)}
+ .nav{padding:10px 0;flex-wrap:wrap}
+ .brand{font-size:15px}
+ nav{width:100%;justify-content:space-between;order:2;padding-bottom:5px}
+ nav a{font-size:11px}
+ .hero{padding-top:32px}
+ .stats{gap:8px}
+ .stat{padding:12px}
+ .stat .num{font-size:24px}
+ .cards,.lesson{grid-template-columns:1fr}
+ .heading{align-items:start;flex-direction:column}
+ .panel{padding:15px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+ <div class="wrap nav">
+  <a class="brand" href="#home"><span class="logo">⌁</span>Siber<em>Waspada</em></a>
+  <nav>
+   <a href="#dashboard">Dashboard</a>
+   <a href="#scanner">Analisis URL</a>
+   <a href="#history">Riwayat</a>
+   <a href="#education">Edukasi</a>
+  </nav>
+ </div>
+</header>
+
+<main class="wrap">
+ <section class="hero" id="home">
+  <div>
+   <div class="eyebrow">Cyber Security • Digital Awareness</div>
+   <h1>Kenali Ancaman.<br><em>Lindungi Dirimu.</em></h1>
+   <p>SiberWaspada membantu pengguna mengenali indikator awal phishing, memahami alasan sebuah tautan perlu diperiksa, dan mempelajari kebiasaan aman saat beraktivitas di internet.</p>
+   <div class="actions">
+    <a class="btn primary" href="#scanner">⌕ Analisis URL</a>
+    <a class="btn" href="#education">Pelajari Keamanan ↗</a>
+   </div>
+   <p style="font-size:11px;margin-top:14px">Versi pengembangan • Analisis lokal berbasis aturan • Tidak mengunjungi URL yang dianalisis</p>
+  </div>
+  <div class="panel terminal">
+   <div class="terminaltop"><span>SIBERWASPADA / SYSTEM STATUS</span><span class="live">● READY</span></div>
+   <div class="shield">⬡</div>
+   <div class="mini-grid">
+    <div class="mini"><b>01</b><small>URL ANALYSIS</small></div>
+    <div class="mini"><b>02</b><small>RISK INDICATORS</small></div>
+    <div class="mini"><b>03</b><small>CYBER AWARENESS</small></div>
+   </div>
+  </div>
+ </section>
+
+ <section id="dashboard">
+  <div class="heading"><div><div class="eyebrow">Overview</div><h2>Dashboard Pemantauan</h2><p>Ringkasan pemindaian yang dilakukan pada browser ini.</p></div></div>
+  <div class="stats">
+   <div class="stat"><div class="label">TOTAL PEMINDAIAN</div><div class="num cyan" id="total">0</div><div class="sub">Riwayat tersimpan lokal</div></div>
+   <div class="stat"><div class="label">INDIKATOR TINGGI</div><div class="num red" id="highCount">0</div><div class="sub">Skor 50–100</div></div>
+   <div class="stat"><div class="label">PERLU DIPERIKSA</div><div class="num yellow" id="mediumCount">0</div><div class="sub">Skor 25–49</div></div>
+   <div class="stat"><div class="label">INDIKATOR RENDAH</div><div class="num green" id="lowCount">0</div><div class="sub">Skor 0–24</div></div>
+  </div>
+ </section>
+
+ <section id="scanner">
+  <div class="heading"><div><div class="eyebrow">URL Intelligence</div><h2>Analisis Tautan</h2><p>Periksa struktur URL dan lihat alasan setiap indikator.</p></div></div>
+  <div class="scanner-grid">
+   <div class="panel">
+    <label for="urlInput">URL yang ingin dianalisis</label>
+    <input class="input" id="urlInput" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://contoh.com/login">
+    <p class="hint">Boleh masukkan URL dengan atau tanpa https://. Jangan masukkan URL yang berisi token pribadi, kode akses, atau informasi rahasia.</p>
+    <button class="primary" id="scanBtn" type="button">⌕ Mulai Analisis</button>
+    <div class="examples">
+     <button class="chip" type="button" data-example="https://example.com">Contoh URL biasa</button>
+     <button class="chip" type="button" data-example="http://192.0.2.1/login">Contoh alamat IP</button>
+     <button class="chip" type="button" data-example="http://secure-login.example.com@192.0.2.1/account">Contoh @ dan IP</button>
+    </div>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+    <div class="notice">Analisis dilakukan di browser dan tidak mengunjungi situs target. Skor adalah heuristik edukatif, bukan probabilitas phishing atau jaminan keamanan.</div>
+   </div>
+   <div class="panel">
+    <div class="eyebrow">Analysis Report</div>
+    <div id="emptyResult" class="empty">Belum ada hasil analisis.<br>Masukkan URL di sebelah kiri untuk memulai.</div>
+    <div class="result" id="result" aria-live="polite">
+     <div class="risk-head">
+      <div class="score" id="score">0<small>/100</small></div>
+      <div><div class="risk-title" id="riskTitle">Hasil analisis</div><p id="riskDescription" style="font-size:11px;margin-top:5px"></p></div>
+     </div>
+     <div class="progress"><div id="progressBar"></div></div>
+     <p id="domainInfo" style="font-size:11px;overflow-wrap:anywhere;margin-bottom:12px"></p>
+     <div class="findings" id="findings"></div>
+     <div class="notice" id="recommendation"></div>
+     <div class="result-actions">
+      <button class="small-btn" id="copyReport" type="button">Salin Ringkasan</button>
+      <button class="small-btn" id="downloadReport" type="button">Ekspor Laporan .txt</button>
+     </div>
+    </div>
+   </div>
+  </div>
+ </section>
+
+ <section id="history">
+  <div class="heading">
+   <div><div class="eyebrow">Local Records</div><h2>Riwayat Pemindaian</h2><p>Riwayat hanya disimpan di browser perangkat ini.</p></div>
+   <div class="toolbar">
+    <select class="input" id="historyFilter" aria-label="Filter tingkat risiko">
+     <option value="all">Semua risiko</option><option value="high">Tinggi</option><option value="medium">Sedang</option><option value="low">Rendah</option>
+    </select>
+    <button id="exportCsv" type="button">Ekspor CSV</button>
+    <button id="clearHistory" class="danger-btn" type="button">Hapus Riwayat</button>
+   </div>
+  </div>
+  <div class="panel table-wrap">
+   <table>
+    <thead><tr><th>Waktu</th><th>Host</th><th>Skor</th><th>Kategori</th></tr></thead>
+    <tbody id="historyBody"><tr><td colspan="4" class="empty">Belum ada riwayat.</td></tr></tbody>
+   </table>
+  </div>
+  <p class="hint" style="margin-top:9px">Riwayat dibatasi hingga 100 hasil terbaru. Jangan gunakan penyimpanan ini untuk informasi sensitif.</p>
+ </section>
+
+ <section id="education">
+  <div class="heading"><div><div class="eyebrow">Cyber Awareness</div><h2>Kenali Pola Phishing</h2><p>Pelajari pola umum dan langkah sederhana untuk melindungi diri.</p></div></div>
+  <div class="cards">
+   <article class="panel"><div class="edu-icon">🔗</div><h3>Domain Menyerupai Asli</h3><p>Penipu bisa memakai ejaan yang mirip dengan nama layanan terkenal. Periksa domain secara menyeluruh, bukan hanya logo atau nama tampilan.</p></article>
+   <article class="panel"><div class="edu-icon">🎭</div><h3>Identitas Palsu</h3><p>Pesan dapat mengaku berasal dari bank, kurir, sekolah, atau platform digital. Konfirmasikan melalui aplikasi atau kanal resmi.</p></article>
+   <article class="panel"><div class="edu-icon">⏳</div><h3>Tekanan Mendesak</h3><p>Ancaman penutupan akun atau hadiah yang terlalu menggiurkan bisa digunakan untuk mendorong tindakan tanpa pemeriksaan.</p></article>
+  </div>
+ </section>
+
+ <section>
+  <div class="heading"><div><div class="eyebrow">Protection Protocol</div><h2>Langkah Perlindungan</h2><p>Jadikan kebiasaan berikut sebagai bagian dari aktivitas digital sehari-hari.</p></div></div>
+  <div class="lesson">
+   <div class="panel"><h3 class="cyan">Sebelum membuka tautan</h3><ul><li>Periksa ejaan domain dan host tujuan.</li><li>Waspadai pesan mendesak dan sumber tidak dikenal.</li><li>Verifikasi melalui aplikasi atau situs resmi.</li><li>Jangan memasukkan kata sandi atau OTP dari tautan yang belum tepercaya.</li></ul></div>
+   <div class="panel"><h3 class="cyan">Jika sudah telanjur mengisi data</h3><ul><li>Segera ubah kata sandi melalui situs resmi.</li><li>Keluar dari sesi lain bila tersedia.</li><li>Hubungi penyedia layanan melalui kanal resmi.</li><li>Jika data keuangan terlibat, hubungi bank atau penyedia pembayaran.</li></ul></div>
+  </div>
+ </section>
+
+ <section>
+  <div class="heading"><div><div class="eyebrow">Methodology</div><h2>Transparansi Sistem</h2></div></div>
+  <div class="faq">
+   <details><summary>Bagaimana skor risiko dihitung?</summary><p>Sistem menambahkan bobot pada indikator seperti penggunaan HTTP, alamat IP, karakter @, domain Punycode, layanan pemendek URL, host panjang, dan kata kunci tertentu. Skor dibatasi 0–100. Bobot merupakan aturan heuristik yang dapat menghasilkan false positive maupun false negative.</p></details>
+   <details><summary>Apakah skor rendah berarti situs aman?</summary><p>Tidak. Situs phishing dapat menggunakan HTTPS dan URL yang terlihat normal. Skor rendah hanya berarti aturan sederhana di aplikasi ini menemukan sedikit indikator yang diperiksa.</p></details>
+   <details><summary>Apakah sistem memeriksa situs secara real-time?</summary><p>Belum. Versi ini tidak memeriksa reputasi domain, konten situs, sertifikat secara langsung, atau basis data ancaman. Integrasi layanan reputasi domain dapat menjadi pengembangan berikutnya.</p></details>
+   <details><summary>Apakah URL dikirim ke server?</summary><p>Kode ini melakukan analisis di browser. URL tidak dikirim oleh fungsi pemindai. Riwayat disimpan melalui localStorage browser. Ekspor laporan dilakukan hanya ketika pengguna menekan tombol ekspor.</p></details>
+  </div>
+ </section>
+</main>
+
+<footer><div class="wrap foot"><div><strong>SiberWaspada</strong><br>Deteksi awal indikator phishing dan edukasi keamanan digital.</div><div>Proyek edukasi keamanan siber.<br>Hasil heuristik bukan jaminan situs aman atau berbahaya.</div></div></footer>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+const STORAGE_KEY = "siberwaspada_history_v2";
+let latestReport = null;
+let historyData = loadHistory();
+
+function loadHistory(){
+  try{
+    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    return Array.isArray(parsed) ? parsed.filter(x =>
+      x && typeof x.score === "number" &&
+      typeof x.host === "string" &&
+      typeof x.date === "string"
+    ).slice(0,100) : [];
+  }catch(error){ return []; }
+}
+function saveHistory(){
+  try{
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(historyData.slice(0,100)));
+  }catch(error){
+    $("status").textContent = "Penyimpanan browser tidak tersedia. Hasil saat ini masih dapat dilihat, tetapi riwayat mungkin tidak tersimpan.";
+  }
+}
+function getLevel(score){
+  if(score >= 50) return {key:"high",label:"Tinggi",color:"var(--red)"};
+  if(score >= 25) return {key:"medium",label:"Sedang",color:"var(--yellow)"};
+  return {key:"low",label:"Rendah",color:"var(--green)"};
+}
+function addFinding(list,points,title,description){
+  list.push({points,title,description});
+}
+function analyzeUrl(raw){
+  let url;
+  try{
+    const normalized = /^[a-zA-Z][a-zA-Z\d+.-]*:/.test(raw)
+      ? raw : "https://" + raw;
+    url = new URL(normalized);
+    if(!["http:","https:"].includes(url.protocol)) throw new Error();
+    if(!url.hostname || !url.hostname.includes(".")) throw new Error();
+  }catch(error){
+    throw new Error("URL tidak valid. Masukkan host yang lengkap, misalnya https://example.com.");
+  }
+
+  const host = url.hostname.toLowerCase();
+  const href = url.href.toLowerCase();
+  const findings = [];
+  let score = 0;
+
+  function add(points,title,description){
+    score += points;
+    addFinding(findings,points,title,description);
+  }
+
+  if(url.protocol === "http:"){
+    add(15,"Tidak menggunakan HTTPS","Koneksi tidak menggunakan HTTPS. Ini menambah risiko, tetapi tidak otomatis membuktikan phishing.");
+  }
+  if(/^\d{1,3}(?:\.\d{1,3}){3}$/.test(host)){
+    add(25,"Host berupa alamat IPv4","Alamat IP langsung terkadang dipakai layanan sah, tetapi juga dapat menyamarkan identitas situs.");
+  }
+  if(url.username || url.password || raw.includes("@")){
+    add(25,"Karakter @ atau kredensial URL","Bagian sebelum @ dapat menyesatkan pembaca tentang host yang sebenarnya dituju.");
+  }
+  if(host.split(".").length >= 5){
+    add(12,"Banyak subdomain","Struktur host memiliki banyak label. Periksa domain utama sebelum mempercayai situs.");
+  }
+  if(host.includes("xn--")){
+    add(20,"Domain Punycode","Nama domain menggunakan representasi Punycode. Periksa kemungkinan karakter yang menyerupai domain lain.");
+  }
+  if(host.length > 35){
+    add(10,"Host sangat panjang","Host panjang lebih sulit diperiksa dan bisa menyamarkan nama domain yang sebenarnya.");
+  }
+  if(url.href.length > 100){
+    add(8,"URL panjang","URL yang panjang patut diperiksa, meskipun banyak URL panjang yang sah.");
+  }
+  if(/(^|\.)((bit\.ly)|(tinyurl\.com)|(t\.co)|(is\.gd)|(cutt\.ly)|(rb\.gy)|(ow\.ly))$/i.test(host)){
+    add(15,"Layanan pemendek URL","Tujuan akhir tidak langsung terlihat dari alamat pendek. Verifikasi tujuan menggunakan cara tepercaya.");
+  }
+  if(/login|verify|verification|secure|account|password|wallet|gift|free|claim|update|banking|otp|signin/i.test(href)){
+    add(10,"Kata kunci sensitif","Kata yang berkaitan dengan login, akun, atau hadiah perlu dinilai sesuai konteks. Kata tersebut sendiri bukan bukti penipuan.");
+  }
+  if(/%[0-9a-f]{2}/i.test(url.href)){
+    add(5,"Karakter URL terenkode","URL memuat karakter terenkode. Ini umum pada URL sah, tetapi tetap periksa konteksnya.");
+  }
+  if(url.port && !["80","443"].includes(url.port)){
+    add(8,"Port tidak umum","Port selain 80 atau 443 digunakan dalam beberapa konfigurasi sah, tetapi patut diperiksa.");
+  }
+  if(host.split(".").some(label => label.startsWith("-") || label.endsWith("-"))){
+    add(8,"Tanda hubung pada tepi label","Tanda hubung pada awal atau akhir label dapat menjadi petunjuk untuk memeriksa domain dengan teliti.");
+  }
+  if(url.searchParams.size >= 5){
+    add(5,"Banyak parameter query","URL memuat banyak parameter. Hal ini umum pada aplikasi web, jadi bukan bukti phishing.");
+  }
+
+  score = Math.min(100,score);
+  const level = getLevel(score);
+  if(findings.length === 0){
+    findings.push({
+      points:0,
+      title:"Tidak ada indikator dalam daftar aturan",
+      description:"Pemeriksaan sederhana tidak menemukan pola yang dicari. Hal ini tidak memastikan URL aman."
+    });
+  }
+
+  let recommendation;
+  if(level.key === "high"){
+    recommendation = "Jangan masukkan informasi sensitif. Periksa domain melalui kanal resmi. Skor tinggi menunjukkan banyak indikator, bukan konfirmasi bahwa situs tersebut berbahaya.";
+  }else if(level.key === "medium"){
+    recommendation = "Tahan dulu sebelum membuka tautan atau login. Periksa domain, sumber pesan, dan tujuan tautan melalui cara yang tepercaya.";
+  }else{
+    recommendation = "Indikator terdeteksi rendah bukan berarti situs aman. Periksa identitas domain dan konteks pesan sebelum mengambil tindakan.";
+  }
+
+  return {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2,7),
+    date: new Date().toISOString(),
+    host,
+    url: url.href,
+    score,
+    level:level.key,
+    label:level.label,
+    findings,
+    recommendation
+  };
+}
+
+function showReport(report){
+  latestReport = report;
+  $("emptyResult").style.display = "none";
+  $("result").classList.add("show");
+  const level = getLevel(report.score);
+  $("score").innerHTML = "";
+  $("score").textContent = String(report.score);
+  const small = document.createElement("small");
+  small.textContent = "/100";
+  $("score").appendChild(small);
+  $("score").style.borderColor = level.color;
+  $("score").style.color = level.color;
+  $("riskTitle").textContent = "Risiko " + report.label;
+  $("riskTitle").style.color = level.color;
+  $("riskDescription").textContent =
+    report.score >= 50 ? "Banyak indikator perlu diperiksa."
+    : report.score >= 25 ? "Terdapat indikator yang memerlukan perhatian."
+    : "Sedikit indikator ditemukan oleh aturan sederhana.";
+  $("progressBar").style.width = report.score + "%";
+  $("progressBar").style.background = level.color;
+  $("domainInfo").textContent = "Host yang dianalisis: " + report.host;
+
+  const list = $("findings");
+  list.replaceChildren();
+  report.findings.forEach(item=>{
+    const row = document.createElement("div");
+    row.className = "finding";
+    const icon = document.createElement("span");
+    icon.className = "severity " + (item.points >= 20 ? "red" : item.points ? "yellow" : "green");
+    icon.textContent = item.points ? "⚠" : "✓";
+    const content = document.createElement("div");
+    const title = document.createElement("b");
+    title.textContent = item.title + (item.points ? " (+" + item.points + ")" : "");
+    const desc = document.createElement("p");
+    desc.textContent = item.description;
+    content.append(title,desc);
+    row.append(icon,content);
+    list.append(row);
+  });
+  $("recommendation").textContent = report.recommendation;
+}
+
+function renderStats(){
+  $("total").textContent = historyData.length;
+  $("highCount").textContent = historyData.filter(x=>x.level==="high").length;
+  $("mediumCount").textContent = historyData.filter(x=>x.level==="medium").length;
+  $("lowCount").textContent = historyData.filter(x=>x.level==="low").length;
+}
+function renderHistory(){
+  const body = $("historyBody");
+  body.replaceChildren();
+  const filter = $("historyFilter").value;
+  const rows = historyData.filter(x=>filter==="all" || x.level===filter);
+  if(!rows.length){
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = 4;
+    td.className = "empty";
+    td.textContent = historyData.length ? "Tidak ada hasil untuk filter ini." : "Belum ada riwayat.";
+    tr.append(td);body.append(tr);return;
+  }
+  rows.forEach(item=>{
+    const tr = document.createElement("tr");
+    const date = document.createElement("td");
+    date.textContent = new Date(item.date).toLocaleString("id-ID");
+    const host = document.createElement("td");
+    host.textContent = item.host;
+    const score = document.createElement("td");
+    score.textContent = item.score + "/100";
+    const level = document.createElement("td");
+    const pill = document.createElement("span");
+    pill.className = "pill " + item.level;
+    pill.textContent = item.label;
+    level.append(pill);
+    tr.append(date,host,score,level);
+    body.append(tr);
+  });
+}
+function updateDashboard(){
+  renderStats();
+  renderHistory();
+}
+function safeDownload(name,content,type){
+  const blob = new Blob([content],{type});
+  const objectUrl = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = objectUrl;a.download = name;
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(objectUrl),1000);
+}
+function csvCell(value){
+  return '"' + String(value ?? "").replace(/"/g,'""') + '"';
+}
+function reportText(report){
+  return [
+    "SIBERWASPADA — LAPORAN ANALISIS URL",
+    "Waktu: " + new Date(report.date).toLocaleString("id-ID"),
+    "Host: " + report.host,
+    "URL: " + report.url,
+    "Skor heuristik: " + report.score + "/100",
+    "Kategori: " + report.label,
+    "",
+    "INDIKATOR:",
+    ...report.findings.map(f=>"- "+f.title+": "+f.description),
+    "",
+    "REKOMENDASI:",
+    report.recommendation,
+    "",
+    "Catatan: analisis ini berbasis aturan sederhana, bukan konfirmasi phishing atau jaminan keamanan."
+  ].join("\n");
+}
+
+$("scanBtn").addEventListener("click",()=>{
+  const raw = $("urlInput").value.trim();
+  $("status").textContent = "";
+  if(!raw){
+    $("status").textContent = "Masukkan URL terlebih dahulu.";
+    $("urlInput").focus();return;
+  }
+  try{
+    const report = analyzeUrl(raw);
+    showReport(report);
+    historyData = [report,...historyData.filter(x=>x.id!==report.id)].slice(0,100);
+    saveHistory();
+    updateDashboard();
+    $("status").textContent = "Analisis selesai. Periksa indikator dan penjelasan sebelum menarik kesimpulan.";
+  }catch(error){
+    $("status").textContent = error.message || "URL tidak dapat dianalisis.";
+  }
+});
+$("urlInput").addEventListener("keydown",event=>{
+  if(event.key==="Enter") $("scanBtn").click();
+});
+document.querySelectorAll("[data-example]").forEach(button=>{
+  button.addEventListener("click",()=>{
+    $("urlInput").value = button.dataset.example;
+    $("urlInput").focus();
+    $("status").textContent = "Contoh dimasukkan. Tekan Mulai Analisis.";
+  });
+});
+$("historyFilter").addEventListener("change",renderHistory);
+$("clearHistory").addEventListener("click",()=>{
+  if(!historyData.length){
+    $("status").textContent = "Riwayat sudah kosong.";return;
+  }
+  if(!confirm("Hapus semua riwayat pemindaian yang tersimpan di browser ini?")) return;
+  historyData = [];
+  saveHistory();updateDashboard();
+  $("status").textContent = "Riwayat lokal telah dibersihkan.";
+});
+$("exportCsv").addEventListener("click",()=>{
+  if(!historyData.length){
+    $("status").textContent = "Belum ada riwayat untuk diekspor.";return;
+  }
+  const header = ["Waktu","Host","Skor","Kategori","URL"];
+  const rows = historyData.map(x=>[x.date,x.host,x.score,x.label,x.url]);
+  const csv = "\uFEFF" + [header,...rows].map(row=>row.map(csvCell).join(",")).join("\r\n");
+  safeDownload("siberwaspada-riwayat.csv",csv,"text/csv;charset=utf-8");
+});
+$("copyReport").addEventListener("click",async()=>{
+  if(!latestReport) return;
+  const text = reportText(latestReport);
+  try{
+    await navigator.clipboard.writeText(text);
+    $("status").textContent = "Ringkasan laporan disalin.";
+  }catch(error){
+    const area = document.createElement("textarea");
+    area.value = text;
+    document.body.appendChild(area);area.select();
+    const success = document.execCommand("copy");
+    area.remove();
+    $("status").textContent = success ? "Ringkasan laporan disalin." : "Salin laporan secara manual melalui ekspor TXT.";
+  }
+});
+$("downloadReport").addEventListener("click",()=>{
+  if(!latestReport) return;
+  safeDownload("siberwaspada-laporan.txt",reportText(latestReport),"text/plain;charset=utf-8");
+});
+
+updateDashboard();
+</script>
+</body>
+</html>
